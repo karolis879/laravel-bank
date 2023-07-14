@@ -27,8 +27,8 @@
                         <td>{{ $accounts->balance }}</td>
                         <td>
                             <div style="display: flex; gap:20px">
-                                <a class="btn btn-secondary" href="">Keisti</a>
-                                <a class="btn btn-secondary" href="">Ištrinti</a>
+                                <a class="btn btn-secondary" href="{{ route('bank-edit', $accounts) }}">Keisti</a>
+                                <a class="btn btn-secondary" href="{{ route('bank-delete', $accounts) }}">Ištrinti</a>
                             </div>
                         </td>
                     </tr>

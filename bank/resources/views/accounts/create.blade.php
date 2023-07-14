@@ -9,15 +9,15 @@
             <form action="{{ route('bank-store') }}" method="post">
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label">Vardas</label>
-                    <input type="text" class="form-control" id="exampleFormControlInput1" name="name" placeholder="Įveskite vardą" required>
+                    <input value="{{ old('name') }}" type="text" class="form-control" id="exampleFormControlInput1" name="name" placeholder="Įveskite vardą" >
                 </div>
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Pavardė</label>
-                    <textarea class="form-control" id="exampleFormControlTextarea1" name="lastName" rows="1" placeholder="Įveskite pavardę" required></textarea>
+                    <input value="{{ old('lastName') }}" class="form-control" id="exampleFormControlTextarea1" name="lastName" rows="1" placeholder="Įveskite pavardę" ></input>
                 </div>
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label">Asmens kodas</label>
-                    <input type="number" class="form-control" id="exampleFormControlTextarea1" name="PersonId" rows="1" placeholder="Įveskite asmens kodą" required></input>
+                    <input value="{{ old('PersonId') }}" class="form-control" id="exampleFormControlTextarea1" name="PersonId" rows="1" placeholder="Įveskite asmens kodą" ></input>
                 </div>
                 <div class= "row justify-content-center">
                     <button class="btn btn-dark" style="width:95%" type="submit">Sukurti</button>

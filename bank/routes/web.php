@@ -24,10 +24,10 @@ Route::prefix('bank')->name('bank-')->group(function () {
     Route::get('/', [R::class, 'index'])->name('index'); // GET /bank from URL:  bank Name: bank-index
     Route::get('/create', [R::class, 'create'])->name('create'); // GET /bank/create from URL:  bank/create Name: bank-create
     Route::post('/', [R::class, 'store'])->name('store'); // POST /bank from URL:  bank Name: bank-store
-    Route::get('/delete/{bank}', [R::class, 'delete'])->name('delete'); // GET /bank/delete/{bank} from URL:  bank/delete/{bank} Name: bank-delete
-    Route::delete('/{bank}', [R::class, 'destroy'])->name('destroy'); // DELETE /bank/{bank} from URL:  bank/{bank} Name: bank-destroy 
-    Route::get('/edit/{bank}', [R::class, 'edit'])->name('edit'); // GET /bank/edit/{bank} from URL:  bank/edit/{bank} Name: bank-edit
-    Route::put('/{bank}', [R::class, 'update'])->name('update'); // PUT /bank/{bank} from URL:  bank/{bank} Name: bank-update
+    Route::get('/delete/{account}', [R::class, 'delete'])->name('delete'); // GET /bank/delete/{bank} from URL:  bank/delete/{bank} Name: bank-delete
+    Route::delete('/{account}', [R::class, 'destroy'])->name('destroy'); // DELETE /bank/{bank} from URL:  bank/{bank} Name: bank-destroy 
+    Route::get('/edit/{account}', [R::class, 'edit'])->name('edit'); // GET /bank/edit/{bank} from URL:  bank/edit/{bank} Name: bank-edit
+    Route::put('/{account}', [R::class, 'update'])->name('update'); // PUT /bank/{bank} from URL:  bank/{bank} Name: bank-update
 
 });
 
