@@ -9,6 +9,11 @@ class Account extends Model
 {
     use HasFactory;
 
+    public function bulbul()
+    {
+        return $this->belongsTo(Holder::class, 'holder_id', 'id');
+    }
+
     public static function generateIban()
     {
 

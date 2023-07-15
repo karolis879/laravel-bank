@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use App\Models\Holder;
 use Illuminate\Support\Facades\Validator;
- 
+
 class AccountController extends Controller
 {
     /**
@@ -27,8 +28,12 @@ class AccountController extends Controller
      */
     public function create()
     {
-        return view('accounts.create');
+        $holders = Holder::all(['id', 'first_name']); // Retrieve only the 'id' and 'first_name' columns
+        return view('accounts.create', [
+            'holders' => $holders
+        ]);
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -39,38 +44,31 @@ class AccountController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-                'name' => 'required|max:50|min:3|alpha',
-                'lastName' => 'required',
-                'PersonId' => [
-                    'required',
-                    'integer',
-                    'regex:/^(3[0-9]{2}|4[0-9]{2}|6[0-9]{2}|5[0-9]{2})(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])\d{4}$/'
-                ],
+
+                'holder_id' => 'required|integer',
+
             ],
             [
-                'name.required' => 'First name required!',
-                'lastName.required' => 'Last name required!',
-                'PersonId.required' => 'Personal id required!',
-                'PersonId.regex' => 'Personal id incorrect!',
+     
 
-            ]
-        );
+                'holder_id.required' => 'Please select author!',
+                'holder_id.integer' => 'Rate must be a number!',
+
+            
+            ]);
+
+        
 
         if ($validator->fails()) {
             $request->flash();
             return redirect()->back()->withErrors($validator);
         }
 
-        $existingAccount = Account::where('personal_id', $request->PersonId)->first();
-        if ($existingAccount) {
-            return redirect()->back()->withErrors(['PersonId' => 'Personal ID already exists!']);
-        }
+
 
         $account = new Account;
-        $account->first_name = $request->name;
-        $account->last_name = $request->lastName;
-        $account->personal_id = $request->PersonId;
         $account->iban = Account::generateIban();
+        $account->holder_id = $request->holder_id;
         $account->balance = 0;
         $account->save();
         return redirect()->route('bank-index')->with('success', 'Sveikinimai!');
@@ -106,12 +104,12 @@ class AccountController extends Controller
             'funds.integer' => 'Funds must be an integer!',
             'funds.min' => 'Funds must be a positive integer or zero!',
         ]);
-    
+
         if ($validator->fails()) {
             $request->flash();
             return redirect()->back()->withErrors($validator);
         }
-    
+
         if ($request->has('addFunds')) {
             $addFunds = $request->funds;
             $account->balance += $addFunds;
@@ -122,11 +120,11 @@ class AccountController extends Controller
             }
             $account->balance -= $removeFunds;
         }
-    
+
         $account->save();
         return redirect()->route('bank-index');
     }
-    
+
 
     public function delete(Account $account)
     {

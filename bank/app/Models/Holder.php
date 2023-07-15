@@ -9,6 +9,11 @@ class Holder extends Model
 {
     use HasFactory;
 
+    public function accounts()
+    {
+        // return $this->hasMany(Account::class, 'holder_id', 'id');
+    }
+
     public static function generateIban()
     {
 
