@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AccountController as R;
+use App\Http\Controllers\HolderController as H;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,18 @@ Route::prefix('bank')->name('bank-')->group(function () {
     Route::delete('/{account}', [R::class, 'destroy'])->name('destroy'); // DELETE /bank/{bank} from URL:  bank/{bank} Name: bank-destroy 
     Route::get('/edit/{account}', [R::class, 'edit'])->name('edit'); // GET /bank/edit/{bank} from URL:  bank/edit/{bank} Name: bank-edit
     Route::put('/{account}', [R::class, 'update'])->name('update'); // PUT /bank/{bank} from URL:  bank/{bank} Name: bank-update
+
+});
+
+Route::prefix('holders')->name('holders-')->group(function () {
+
+    Route::get('/', [H::class, 'index'])->name('index');
+    Route::get('/create', [H::class, 'create'])->name('create');
+    Route::post('/', [H::class, 'store'])->name('store');
+    Route::get('/delete/{holder}', [H::class, 'delete'])->name('delete');
+    Route::delete('/{holder}', [H::class, 'destroy'])->name('destroy');
+    Route::get('/edit/{holder}', [H::class, 'edit'])->name('edit');
+    Route::put('/{holder}', [H::class, 'update'])->name('update');
 
 });
 
