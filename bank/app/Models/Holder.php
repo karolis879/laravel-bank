@@ -11,7 +11,7 @@ class Holder extends Model
 
     public function accounts()
     {
-        // return $this->hasMany(Account::class, 'holder_id', 'id');
+        return $this->hasMany(Account::class, 'holder_id', 'id');
     }
 
     public static function generateIban()

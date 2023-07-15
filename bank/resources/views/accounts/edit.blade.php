@@ -8,23 +8,23 @@
         <h1>Atnaujinti saskaitą</h1>
             <form action="{{ route('bank-update', $account) }}" method="post">
                 <div class="mb-3">
-                    <label for="first_name">Vardas</label>
-                    {{ $account->first_name }}
+                    <label for="first_name">Vardas: </label>
+                    {{ $account->holder->first_name }}
                 </div>
                 <div class="mb-3">
-                    <label for="last_name">Pavardė</label>
-                    {{ $account->last_name }}
+                    <label for="last_name">Pavardė: </label>
+                    {{ $account->holder->last_name }}
                 </div>
                 <div class="mb-3">
-                    <label for="last_name">Saskaitos numeris</label>
+                    <label for="last_name">Saskaitos numeris: </label>
                     {{ $account->iban }}
                 </div>
                 <div class="mb-3">
-                    <label for="last_name">Asmens kodas</label>
-                    {{ $account->personal_id }}
+                    <label for="last_name">Asmens kodas: </label>
+                    {{ $account->holder->personal_id }}
                 </div>
                 <div class="mb-3">
-                    <label for="last_name">Likutis</label>
+                    <label for="last_name">Likutis: </label>
                     {{ $account->balance }}
                 </div>
                 <div class="mb-3">

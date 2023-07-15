@@ -20,9 +20,9 @@
             @forelse($account as $accounts) 
             <tbody>
                     <tr>
-                        <td>{{ $accounts->bulbul->first_name }}</td>
-                        <td>{{  $accounts->bulbul->last_name  }}</td>
-                        <td>{{ $accounts->bulbul->personal_id }}</td>
+                        <td>{{ $accounts->holder->first_name }}</td>
+                        <td>{{  $accounts->holder->last_name  }}</td>
+                        <td>{{ $accounts->holder->personal_id }}</td>
                         <td>{{ $accounts->iban }}</td>
                         <td>{{ $accounts->balance }}</td>
                         <td>

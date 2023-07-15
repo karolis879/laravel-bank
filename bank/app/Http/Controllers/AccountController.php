@@ -44,17 +44,11 @@ class AccountController extends Controller
         $validator = Validator::make(
             $request->all(),
             [
-
                 'holder_id' => 'required|integer',
-
             ],
             [
-     
-
                 'holder_id.required' => 'Please select author!',
                 'holder_id.integer' => 'Rate must be a number!',
-
-            
             ]);
 
         
@@ -87,8 +81,11 @@ class AccountController extends Controller
      */
     public function edit(Account $account)
     {
+        $holders = Holder::all();
+
         return view('accounts.edit', [
-            'account' => $account
+            'account' => $account,
+            'holder' => $holders
         ]);
     }
 

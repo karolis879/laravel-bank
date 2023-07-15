@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Holder;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Account;
 
 
 class HolderController extends Controller
@@ -120,6 +121,10 @@ class HolderController extends Controller
 
     public function delete(Holder $holder)
     {
+        if ($holder->accounts()->count()) {
+            return redirect()->back()->with('info', 'Can not delete holder, because it has colors!');
+        }
+
         return view('holders.delete', [
             'holder' => $holder
         ]);
@@ -130,7 +135,12 @@ class HolderController extends Controller
      */
     public function destroy(Holder $holder)
     {
+
+        
         $holder->delete();
-        return redirect()->route('holders-index');
+        return redirect()
+        ->route('holders-index')
+        ->with('success', 'Author has been deleted!');
     }
+    
 }
