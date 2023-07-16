@@ -20,7 +20,7 @@
                     <tr>
                         <td>{{ $holders->first_name }}</td>
                         <td>{{  $holders->last_name  }}</td>
-                        <td>{{ $holders->balance }}</td>
+                        <td>[{{ $holders->accounts()->count() }}]</td>
                         <td>
                             <div style="display: flex; gap:20px">
                                 <a class="btn btn-secondary" href="{{ route('holders-edit', $holders) }}">Keisti</a>

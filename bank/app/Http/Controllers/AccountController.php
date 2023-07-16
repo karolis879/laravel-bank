@@ -13,13 +13,50 @@ class AccountController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // $accounts = Account::all();
 
-        $accounts = Account::all();
+        $sortBy = $request->sort_by ?? '';
+        $orderBy = $request->order_by ?? '';
+        if ($orderBy && !in_array($orderBy, ['asc', 'desc'])) {
+            $orderBy = '';
+        }
+        $filterBy = $request->filter_by ?? '';
+        $filterValue = $request->filter_value ?? '0';
+        $perPage = (int) $request->per_page ?? 20;
 
+        if ($request->s) {
+
+            $accounts = Account::where('balance', 'like', '%' . $request->s . '%')->paginate(20)->withQueryString();
+        } else {
+
+            $accounts = Account::select('accounts.*');
+
+            //filtravimas
+            $accounts = match ($filterBy) {
+                'balance' => Account::where('balance', '=', $filterValue),
+                default => Account::where('balance', '>', 0),
+            };
+
+
+            //rikiavimas
+            $accounts = match ($sortBy) {
+                'name' => $accounts->orderBy('id', $orderBy),
+                'balance' => $accounts->orderBy('balance', $orderBy),
+                default => $accounts
+            };
+
+            $accounts = $accounts->paginate($perPage)->withQueryString();
+        }
         return view('accounts.index', [
-            'account' => $accounts
+            'accounts' => $accounts,
+            'sortBy' => $sortBy,
+            'orderBy' => $orderBy,
+            'filterBy' => $filterBy,
+            'filterValue' => $filterValue,
+            'perPage' => $perPage,
+            's' => $request->s ?? ''
         ]);
     }
 
@@ -33,7 +70,7 @@ class AccountController extends Controller
             'holders' => $holders
         ]);
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -49,9 +86,10 @@ class AccountController extends Controller
             [
                 'holder_id.required' => 'Please select author!',
                 'holder_id.integer' => 'Rate must be a number!',
-            ]);
+            ]
+        );
 
-        
+
 
         if ($validator->fails()) {
             $request->flash();
