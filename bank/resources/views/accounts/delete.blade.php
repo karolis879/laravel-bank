@@ -16,7 +16,7 @@
                                 <button class="btn btn-dark" type="submit">Ištrinti</button>
                             </div>
                             <div>
-                                <a  href="{{ route('bank-index') }}">Atšaukti</a>
+                                <a href="{{ route('holders-preview', ['holder' => $account->holder_id]) }}">Atšaukti</a>
                             </div>
                             @method('delete')
                             @csrf

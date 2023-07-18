@@ -10,15 +10,36 @@ use App\Models\Account;
 
 class HolderController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function index()
     {
-
-        $holders = Holder::all();
-
+        $holders = Holder::orderBy('last_name')->paginate(5)->withQueryString();
+    
         return view('holders.index', [
-            'holder' => $holders
+            'holders' => $holders
         ]);
     }
+    
+    
+
+
+    public function preview(Request $request)
+    {
+        $holder = Holder::findOrFail($request->holder);
+        $accounts = $holder->accounts()->paginate(10); // Assuming you want to paginate with 10 accounts per page
+    
+        return view('accounts.preview', [
+            'holder' => $holder,
+            'accounts' => $accounts,
+        ]);
+    }
+    
+
 
     /**
      * Show the form for creating a new resource.
@@ -95,34 +116,36 @@ class HolderController extends Controller
      */
     public function update(Request $request, Holder $holder)
     {
-        $validator = Validator::make($request->all(), 
-        [
-            'name' => 'required|max:50|min:3|alpha',
-        ],
-        [
-            'name.required' => 'Please enter author name!',
-            'name.max' => 'Author name is too long!',
-            'name.min' => 'Author name is too short!',
-            'name.alpha' => 'Author name must contain only letters!',
-        ]
-    );
-    
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required|max:50|min:3|alpha',
+            ],
+            [
+                'name.required' => 'Please enter author name!',
+                'name.max' => 'Author name is too long!',
+                'name.min' => 'Author name is too short!',
+                'name.alpha' => 'Author name must contain only letters!',
+            ]
+        );
+
         if ($validator->fails()) {
             $request->flash();
             return redirect()->back()->withErrors($validator);
         }
-    
+
         $holder->first_name = $request->name;
-        $holder->last_name = $request->name;
+        $holder->last_name = $request->lastName;
         $holder->save();
         return redirect()->route('holders-index');
     }
-    
+
 
     public function delete(Holder $holder)
     {
-        if ($holder->accounts()->count()) {
-            return redirect()->back()->with('info', 'Can not delete holder, because it has colors!');
+        $balance = $holder->accounts()->sum('balance');
+        if ($balance > 0) {
+            return redirect()->back()->with('info', 'Cannot delete holder because it has accounts with a non-zero balance!');
         }
 
         return view('holders.delete', [
@@ -130,17 +153,18 @@ class HolderController extends Controller
         ]);
     }
 
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Holder $holder)
     {
+        $balance = $holder->accounts()->sum('balance');
+        if ($balance > 0) {
+            return redirect()->back()->with('info', 'Cannot delete holder because it has accounts with a non-zero balance!');
+        }
 
-        
         $holder->delete();
-        return redirect()
-        ->route('holders-index')
-        ->with('success', 'Author has been deleted!');
+        return redirect()->route('holders-index')->with('success', 'Holder has been deleted!');
     }
-    
 }

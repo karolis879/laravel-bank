@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = Faker::create('lt_LT');
+        $faker = Faker::create();
 
         DB::table('users')->insert([
             'name' => 'Johnas',
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123'),
         ]);
 
-        foreach (range(1, 20) as $_) {
+        foreach (range(1, 10) as $_) {
             $firstName = $faker->firstName;
             $lastName = $faker->lastName;
             $personalId = mt_rand(10000000000, 99999999999);
@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
             ]);
             
             $existingHolderIds = DB::table('holders')->pluck('id')->toArray();
-            foreach (range(1, 10) as $_) {
+            foreach (range(1, 5) as $_) {
                 DB::table('accounts')->insert([
                     'iban' => $faker->iban(),
                     'holder_id' => $faker->randomElement($existingHolderIds),

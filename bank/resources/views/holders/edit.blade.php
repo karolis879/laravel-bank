@@ -20,7 +20,7 @@
                 <div style="display: flex; gap: 5px">
                     <button name="addFunds" class="btn btn-secondary" type="submit" class="mb-3">Patvirtinti</button>
                 </div>
-                <a href="{{ route('holders-index') }}">Atšaukti</a>
+                <a href="{{ route('holders-preview', ['holder' => $holder->id]) }}">Atšaukti</a>
                 @method('put')
                 @csrf
             </form>

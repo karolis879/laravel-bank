@@ -10,6 +10,11 @@ use Illuminate\Support\Facades\Validator;
 
 class AccountController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      */
@@ -60,6 +65,56 @@ class AccountController extends Controller
         ]);
     }
 
+    public function transfer()
+    {
+        $accounts = Account::all();
+
+        return view('accounts.transfer', [
+            'accounts' => $accounts,
+        ]);
+    }
+
+    /**
+ * Process the fund transfer between accounts.
+ */
+public function transferFunds(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'from_account' => 'required|exists:accounts,id',
+        'to_account' => 'required|exists:accounts,id',
+        'amount' => 'required|numeric|min:0',
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator);
+    }
+
+    $fromAccount = Account::find($request->from_account);
+    $toAccount = Account::find($request->to_account);
+    $amount = $request->amount;
+
+    if ($fromAccount->balance < $amount) {
+        return redirect()->back()->withErrors(['amount' => 'Insufficient balance for the transfer.']);
+    }
+
+    // Perform the fund transfer
+    $fromAccount->balance -= $amount;
+    $fromAccount->save();
+
+    $toAccount->balance += $amount;
+    $toAccount->save();
+
+    // Log the transfer details in a variable
+    $transferDetails = [
+        'from_account' => $fromAccount->iban,
+        'to_account' => $toAccount->iban,
+        'amount' => $amount,
+    ];
+
+    return view('accounts.transfer_confirmation', compact('transferDetails'));
+}
+
+
     /**
      * Show the form for creating a new resource.
      */
@@ -103,7 +158,7 @@ class AccountController extends Controller
         $account->holder_id = $request->holder_id;
         $account->balance = 0;
         $account->save();
-        return redirect()->route('bank-index')->with('success', 'Sveikinimai!');
+        return redirect()->route('holders-index')->with('success', 'Sveikinimai!');
     }
 
     /**
@@ -120,12 +175,13 @@ class AccountController extends Controller
     public function edit(Account $account)
     {
         $holders = Holder::all();
-
+    
         return view('accounts.edit', [
             'account' => $account,
-            'holder' => $holders
+            'holders' => $holders
         ]);
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -157,16 +213,24 @@ class AccountController extends Controller
         }
 
         $account->save();
-        return redirect()->route('bank-index');
+        $holder = Holder::find($account->holder_id);
+        return redirect()->route('holders-preview', ['holder' => $holder]);
     }
 
 
     public function delete(Account $account)
     {
+        $balance = $account->balance;
+    
+        if ($balance > 0) {
+            return redirect()->back()->with('info', 'Cannot delete the account because it has a non-zero balance!');
+        }
+    
         return view('accounts.delete', [
             'account' => $account
         ]);
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -174,6 +238,7 @@ class AccountController extends Controller
     public function destroy(Account $account)
     {
         $account->delete();
-        return redirect()->route('bank-index');
+        $holder = Holder::find($account->holder_id);
+        return redirect()->route('holders-preview', ['holder' => $holder]);
     }
 }
